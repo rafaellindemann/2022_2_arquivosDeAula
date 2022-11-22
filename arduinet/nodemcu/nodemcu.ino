@@ -19,19 +19,19 @@
 
 
 // Substitua com as credenciais da sua rede
-const char* ssid     = "NodeMCU";
+const char* ssid     = "arduino";
 const char* password = "12345678";
 
 // Seu endereço de IP estático (será atribuido à placa)
-IPAddress local_IP(192, 168, 45, 150);
+IPAddress local_IP(192, 168, 0, 101);
 // O endereço do gateway
-IPAddress gateway(192, 168, 45, 98);
+IPAddress gateway(192, 168, 0, 1);
 
 IPAddress subnet(255, 255, 255, 0);
 IPAddress primaryDNS(8, 8, 8, 8);   //opcional
 IPAddress secondaryDNS(8, 8, 4, 4); //opcional
 
-const int pinoSaidaDigital = 2; //(LED da placa - pino 2)
+const int pinoSaidaDigital = D4; //(LED da placa - pino 2)
 const int pinoSaidaAnalogica = 5; //10; //GPIO5 -> D1
 const int pinoEntradaDigital = 4; //9; GPIO4 -> D2
 const int pinoEntradaAnalogica = A0;
@@ -39,28 +39,30 @@ const int pinoEntradaAnalogica = A0;
 String strValorDigital; // Estado do LED - ON/OFF
 const char* PARAM_INPUT_1 = "input1"; //armazena parametro recebido
 
+int valorAnalogico = 0;
+int valorDigital = 0;
 
 
 // Cria um objeto AsyncWebServer na porta 80
 AsyncWebServer server(80);
 
 String getValorAnalogico() {
-  int valorLido = analogRead(pinoEntradaAnalogica);
+  int valorAnalogico = analogRead(pinoEntradaAnalogica);
   //map(value, fromLow, fromHigh, toLow, toHigh)
-  float valorConvertido = float(map(valorLido, 0, 1023, 0, 33))/10.0; //le em inteiro de 0 a 33 e divide por 10 -> saida de 0 a 3.3 V
+  float valorConvertido = float(map(valorAnalogico, 0, 1023, 0, 33))/10.0; //le em inteiro de 0 a 33 e divide por 10 -> saida de 0 a 3.3 V
   Serial.println("valor analogico lido: " + String(valorConvertido));
   return String(valorConvertido);
 }
   
 String getValorDigital() {
-  int valorLido = digitalRead(pinoEntradaDigital);
-  if(valorLido == LOW){ // LOW ou HIGH depende da ligação do circuito
+  int valorDigital = digitalRead(pinoEntradaDigital);
+  if(valorDigital == LOW){ // LOW ou HIGH depende da ligação do circuito
     strValorDigital = "ON";
   }
   else{
     strValorDigital = "OFF";
   }
-  Serial.println("valor digital lido: " + String(valorLido) + " " + strValorDigital);
+  Serial.println("valor digital lido: " + String(valorDigital) + " " + strValorDigital);
   return String(strValorDigital);
 }
 
@@ -81,7 +83,7 @@ void setValorAnalogico(String valorAnalogico) {
   
 }
 
- 
+
 void setup(){
   // Porta Serial para debug
   Serial.begin(115200);
@@ -94,7 +96,7 @@ void setup(){
   if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
     Serial.println("Falha ao configurar em modo Station (STA)");
   }
-  
+
   // Conecta na rede Wi-Fi com o SSID e senha (password)
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -108,7 +110,7 @@ void setup(){
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
- 
+
   // Rota para comandar a saida digital (Liga / ON)
   server.on("/saidaDigital/on", HTTP_GET, [](AsyncWebServerRequest *request){
     setValorDigital(LOW); // LOW ou HIGH depende da ligação do circuito
@@ -153,7 +155,7 @@ void setup(){
   // Inicia o servidor
   server.begin();
 }
- 
+
 void loop(){
   
 }
