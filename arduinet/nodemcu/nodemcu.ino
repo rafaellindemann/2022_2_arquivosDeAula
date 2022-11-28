@@ -31,9 +31,9 @@ IPAddress subnet(255, 255, 255, 0);
 IPAddress primaryDNS(8, 8, 8, 8);   //opcional
 IPAddress secondaryDNS(8, 8, 4, 4); //opcional
 
-const int pinoSaidaDigital = D4; //(LED da placa - pino 2)
-const int pinoSaidaAnalogica = 5; //10; //GPIO5 -> D1
-const int pinoEntradaDigital = 4; //9; GPIO4 -> D2
+const int pinoSaidaDigital = D4;  //17          //(LED da placa - pino 2)
+const int pinoSaidaAnalogica = D5; //5         //10; //GPIO5 -> D1
+const int pinoEntradaDigital = D0; //d0 4        //9; GPIO4 -> D2
 const int pinoEntradaAnalogica = A0;
 
 String strValorDigital; // Estado do LED - ON/OFF
